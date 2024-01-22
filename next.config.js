@@ -1,4 +1,10 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  images: {
+    domains: ['content.pancake.vn', 'statics.pancake.vn'],
 
-module.exports = nextConfig
+  },
+  
+};
+
+module.exports = nextConfig;
