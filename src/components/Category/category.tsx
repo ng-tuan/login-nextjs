@@ -1,9 +1,8 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import axios from 'axios';
 import { map } from 'lodash';
-import slugify from 'slugify';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 
 type CategoryItem = {
   id: number;
@@ -11,7 +10,7 @@ type CategoryItem = {
   item: string;
   // Add other properties as needed
 };
-// https://pos.pages.fm/api/v1/shops/4426911/categories?api_key=d14a7f33728c43f7b5cb51957bdebb07
+
 const Category: React.FC = () => {
   const [categories, setCategories] = useState<CategoryItem[]>([]);
 
@@ -23,7 +22,6 @@ const Category: React.FC = () => {
     axios
       .get(api_url)
       .then((response) => {
-        // Assuming your response.data is an array of CategoryItem
         setCategories(response.data.data);
         console.log('Fetch data success');
       })
@@ -39,9 +37,6 @@ const Category: React.FC = () => {
       : originalText;
   };
 
-  const generateSlug = (text: string): string => {
-    return slugify(text, { lower: true });
-  };
   return (
     <>
       {map(categories, (item) => (

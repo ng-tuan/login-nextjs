@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { map } from 'lodash';
 import Link from 'next/link';
+import Card from './card';
 
 type CategoryItem = {
   id: number;
@@ -43,19 +44,15 @@ export default function Category1() {
 
   return (
     <>
-      {map(categories, (item) => (
-        <Link href="/details/[id]" as={`/details/${item.id}`} key={item.id}>
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            {formatText(item.text)}{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </Link>
-      ))}
+      <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 sm:py-12">
+        <div className="max-w-screen-md mx-auto">
+          <div className="grid grid-cols-4 gap-6">
+            {categories.map((item) => (
+              <Card key={item.id} item={item} />
+            ))}
+          </div>
+        </div>
+      </div>
     </>
   );
 }

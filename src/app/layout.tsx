@@ -16,7 +16,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css" />
+      </head>
+
       <body className={inter.className}>{children}</body>
     </html>
   )
 }
+
+

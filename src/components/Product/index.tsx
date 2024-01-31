@@ -15,7 +15,8 @@ const Product: React.FC<ProductProps> = ({ id }) => {
   async function getData(id: number) {
     const shop_id = 4426911;
     const api_key = 'd14a7f33728c43f7b5cb51957bdebb07';
-    const api_url = `https://pos.pages.fm/api/v1/shops/${shop_id}/products/variations?api_key=${api_key}&category_id[]=${id}`;
+    const page_size = 100
+    const api_url = `https://pos.pages.fm/api/v1/shops/${shop_id}/products/variations?api_key=${api_key}&category_id[]=${id}&page_size=${page_size}`;
 
     const res = await fetch(api_url);
 
@@ -43,75 +44,11 @@ const Product: React.FC<ProductProps> = ({ id }) => {
     fetchData();
   }, [id]);
 
-  console.log(productData);
 
   const groupedData = groupBy(productData, 'product.display_id');
 
-  console.log(groupedData);
   return (
     <>
-      {/* <div>
-        <h2>Products for ID {id}</h2>
-        {productData && productData.length > 0 && (
-          <div className="flex flex-wrap gap-4">
-            {map(productData, (product: any, index: number) => (
-              <div key={index} className="flex-shrink-0 w-1/5">
-                <div className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert">
-                  <span>{product.product.name}</span>
-                  <br />
-                  <span>{product.product.display_id}</span>
-                  <br />
-                  <span>Tôn kho: {product.remain_quantity}</span>
-                  <br />
-                  <Image
-                    src={product.images[0]}
-                    alt={product.display_id}
-                    width={350}
-                    height={100}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div> */}
-      <hr />
-      {/* <div>
-        {Object.entries(groupedData).map(([displayId, items]) => (
-          <>
-            <div key={displayId}>
-              <div className="max-w-sm rounded overflow-hidden shadow-lg">
-                {items.map((item) => (
-                  <>
-                    <img
-                      className="w-full"
-                      src={item.images}
-                      alt={item.product.name}
-                    />
-                    <div className="px-6 py-4">
-                      <div className="font-bold text-xl mb-2">
-                        {item.product.name}
-                      </div>
-                      <p className="text-gray-700 text-base">`${displayId}`</p>
-                      <div className="px-6 pt-4 pb-2">
-                        <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                          #photography
-                        </span>
-                        <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                          #travel
-                        </span>
-                        <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                          #winter
-                        </span>
-                      </div>
-                    </div>
-                  </>
-                ))}
-              </div>
-            </div>
-          </>
-        ))}
-      </div> */}
       <div className="flex flex-wrap gap-4 justify-center">
         {Object.entries(groupedData).map(([displayId, items]) => (
           <div
