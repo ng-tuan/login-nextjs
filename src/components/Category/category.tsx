@@ -28,7 +28,7 @@ const Category: React.FC = () => {
       .catch((error) => {
         console.error('Error fetching data:', error.message);
       });
-  }, []);
+  }, [api_url]);
 
   const formatText = (originalText: string): string => {
     const lastHyphenIndex = originalText.lastIndexOf('-');

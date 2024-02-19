@@ -5,7 +5,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 interface ProductProps {
-  id: number;
+  id: string;
   product: string;
 }
 
@@ -63,7 +63,7 @@ const Product: React.FC<ProductProps> = ({ id }) => {
                   src={item.images[0]} // Assuming the first image in the array is the main image
                   alt={item.product.name}
                 /> */}
-                <Link href={`/details/${item.product_id}`}>
+                <Link href={`/details/${item.slug}`}>
                   <img
                     className="w-full"
                     src={item.images[0]} // Assuming the first image in the array is the main image

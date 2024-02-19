@@ -2,12 +2,11 @@
 import Navbar from '@/components/Navbar';
 import React, { ReactNode, useEffect } from 'react';
 
-import { useState } from 'react';
-import { StarIcon } from '@heroicons/react/20/solid';
 import { RadioGroup } from '@headlessui/react';
+import { StarIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
-import Cart from '@/components/Cart';
-import { useCart } from '@/components/Cart/context/CartContext';
+import { useState } from 'react';
+import HTMLReactParser from 'html-react-parser/lib/index';
 
 const product = {
   name: 'Basic Tee 6-Pack',
@@ -80,6 +79,7 @@ interface ProductDetail {
   images: string[];
   remain_quantity: number;
   retail_price: number;
+  content: string;
 }
 
 interface DetailsPageProps {
@@ -104,6 +104,7 @@ const DetailsPage: React.FC<DetailsPageProps> = ({ params }) => {
     null,
   );
   const [productPrices, setProductPrices] = useState<number[]>([]);
+  const [productContent, setProductContent] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,7 +117,9 @@ const DetailsPage: React.FC<DetailsPageProps> = ({ params }) => {
 
         const retail_price = response1.data.retail_price;
 
+        const product_content = response1.data.content;
         setProductPrices(retail_price);
+        setProductContent(product_content);
         //setProductDetails(response1.data);
         // Step 2: Fetch data from API 2 using the obtained product_id
         const response2 = await axios.get(
@@ -138,12 +141,13 @@ const DetailsPage: React.FC<DetailsPageProps> = ({ params }) => {
 
   console.log('Product Detail:', productDetail);
   console.log('Product Prices:', productPrices);
+  console.log('Product Content:', productContent);
   console.log(selectedColor);
 
   const getColorOptions = () => {
     const colorSet = new Set();
-    productDetail?.variations?.forEach((variation) => {
-      variation.fields.forEach((field) => {
+    productDetail?.variations?.forEach((variation: { fields: any[] }) => {
+      variation.fields.forEach((field: { name: string; value: unknown }) => {
         if (field.name === 'Màu') {
           colorSet.add(field.value);
         }
@@ -168,8 +172,8 @@ const DetailsPage: React.FC<DetailsPageProps> = ({ params }) => {
 
   const getSizeOptions = () => {
     const sizeSet = new Set<string>();
-    productDetail?.variations?.forEach((variation) => {
-      variation.fields.forEach((field) => {
+    productDetail?.variations?.forEach((variation: { fields: any[] }) => {
+      variation.fields.forEach((field: { name: string; value: string }) => {
         if (field.name === 'Size') {
           sizeSet.add(field.value);
         }
@@ -178,15 +182,21 @@ const DetailsPage: React.FC<DetailsPageProps> = ({ params }) => {
     return Array.from(sizeSet);
   };
 
-  const filteredVariations = productDetail?.variations?.filter((variation) => {
-    const colorMatch = selectedColor
-      ? variation.fields.some((field) => field.value === selectedColor)
-      : true;
-    const sizeMatch = selectedSize
-      ? variation.fields.some((field) => field.value === selectedSize)
-      : true;
-    return colorMatch && sizeMatch;
-  });
+  const filteredVariations = productDetail?.variations?.filter(
+    (variation: { fields: any[] }) => {
+      const colorMatch = selectedColor
+        ? variation.fields.some(
+            (field: { value: string }) => field.value === selectedColor,
+          )
+        : true;
+      const sizeMatch = selectedSize
+        ? variation.fields.some(
+            (field: { value: string }) => field.value === selectedSize,
+          )
+        : true;
+      return colorMatch && sizeMatch;
+    },
+  );
 
   console.log('Filtered Variations:', filteredVariations);
 
@@ -234,6 +244,8 @@ const DetailsPage: React.FC<DetailsPageProps> = ({ params }) => {
   const handleToggleCart = () => {
     setShowCart(!showCart);
   };
+
+  console.log();
 
   return (
     <>
@@ -591,10 +603,13 @@ const DetailsPage: React.FC<DetailsPageProps> = ({ params }) => {
                     <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
                       {getSizeOptions().map((sizeOption) => {
                         const isSizeInStock = filteredVariations.some(
-                          (variation) =>
+                          (variation: {
+                            remain_quantity: number;
+                            fields: any[];
+                          }) =>
                             variation.remain_quantity > 0 &&
                             variation.fields.some(
-                              (field) =>
+                              (field: { name: string; value: string }) =>
                                 field.name === 'Size' &&
                                 field.value === sizeOption,
                             ),
@@ -689,9 +704,7 @@ const DetailsPage: React.FC<DetailsPageProps> = ({ params }) => {
                 )}
               </form>
             </div>
-            {showCart && (
-              <Cart cartItems={cartItems} onClose={() => setShowCart(false)} />
-            )}
+
             <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pb-16 lg:pr-8 lg:pt-6">
               {/* Description and details */}
               <div>
@@ -699,7 +712,8 @@ const DetailsPage: React.FC<DetailsPageProps> = ({ params }) => {
 
                 <div className="space-y-6">
                   <p className="text-base text-gray-900">
-                    {product.description}
+                  {HTMLReactParser(productContent || '')}
+
                   </p>
                 </div>
               </div>
